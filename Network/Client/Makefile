@@ -1,5 +1,5 @@
 # program executable name
-TARGET = 
+TARGET = client
 
 # compiler flags
 CFLAGS = -g -Wall 
@@ -18,10 +18,10 @@ OBJECTS = $(SOURCES:.c=.o)
 
 # link programs
 $(TARGET): $(OBJECTS)
-	/home/natalie/AquariumProjectGit/AquariumProject/x-tools/arm-rpi-linux-gnueabi/bin/arm-rpi-linux-gnueabi-gcc -o $@ $^ $(LDFLAGS)
+	gcc -o $@ $^ $(LDFLAGS)
 # compile
 %.o : %.c
-	/home/natalie/AquariumProjectGit/AquariumProject/x-tools/arm-rpi-linux-gnueabi/bin/arm-rpi-linux-gnueabi-gcc -c -o $@ $< $(CFLAGS)
+	gcc -c -o $@ $< $(CFLAGS)
 # cleaning
 clean:
 	rm -f $(TARGET) $(OBJECTS) 

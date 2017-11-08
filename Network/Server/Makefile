@@ -1,5 +1,5 @@
 # program executable name
-TARGET = 
+TARGET = server
 
 # compiler flags
 CFLAGS = -g -Wall 

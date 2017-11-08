@@ -2,6 +2,7 @@
 #include<string.h>    
 #include<sys/socket.h>    
 #include<arpa/inet.h> 
+#include "mysql_connection.h"
  
 int main(int argc , char *argv[])
 {
@@ -17,7 +18,7 @@ int main(int argc , char *argv[])
     }
     puts("Socket created");
      
-    server.sin_addr.s_addr = inet_addr("129.241.154.102");
+    server.sin_addr.s_addr = inet_addr("129.241.154.120");
     server.sin_family = AF_INET;
     server.sin_port = htons( 8888 );
  
