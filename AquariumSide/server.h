@@ -7,5 +7,5 @@
 extern "C"
 {
     int serverInit();
-    void sendToServer();	
+    void sendToClient();	
 }

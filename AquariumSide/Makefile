@@ -14,7 +14,7 @@ SOURCES = $(wildcard *.cpp)
 all: $(TARGET)
 
 # define object files
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS = $(SOURCES:.c=.o)
 
 # link programs
 $(TARGET): $(OBJECTS)

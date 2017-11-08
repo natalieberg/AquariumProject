@@ -49,23 +49,20 @@ int serverInit()
     return 0;
 }
 
-void sendToServer()
+void sendToClient()
 {
+  
     while(1)
     {
-        serverInit();
-
-        while(1)
+        sprintf(msg, "yoyo");
+        err_send = send(client_sock, msg, strlen(msg), MSG_NOSIGNAL);
+        if (err_send == -1)
         {
-            sprintf(msg, "yoyo");
-            err_send = send(client_sock, msg, strlen(msg), MSG_NOSIGNAL);
-            if (err_send == -1)
-            {
-              close(socket_desc);
-              close(client_sock);
-              break;
-            }
-            sleep(1);
-        } 
-    }
+            close(socket_desc);
+            close(client_sock);
+            puts("Connection closed");
+            serverInit();
+        }
+    sleep(1);
+    } 
 }
