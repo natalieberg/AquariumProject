@@ -1,15 +1,21 @@
-#include "thread"
+#include <thread>
+#include <queue>
+#include <mutex>
 #include "server.h"
+#include "readTemp.h"
+#include "includes.h"
 
 using namespace std;
 
 int main()
 {
-	serverInit();
+	queue<float> temperatureQueue;
 
-	thread sendThread (sendToClient);
+	thread serverThread (sendUDP, &temperatureQueue);
+	thread temperatureThread (readTemp, &temperatureQueue);
 
-	sendThread.join();
+	serverThread.join();
+	temperatureThread.join();
 
 	return 0;
 }

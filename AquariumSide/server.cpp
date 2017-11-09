@@ -1,10 +1,10 @@
 #include "server.h" 
+#include "includes.h"
 
 int socket_desc , client_sock , c , read_size , err_send;
 struct sockaddr_in server , client;
 char msg[2000];
 char msg_received[2000];
-
 
 int serverInit()
 {
@@ -14,7 +14,7 @@ int serverInit()
     {
         printf("Could not create socket");
     }
-    puts("Socket created");
+    //puts("Socket created");
      
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
@@ -28,7 +28,7 @@ int serverInit()
         perror("bind failed. Error");
         return 1;
     }
-    puts("Bind done");
+   //puts("Bind done");
      
     //Listen
     listen(socket_desc , 3);
@@ -49,9 +49,10 @@ int serverInit()
     return 0;
 }
 
-void sendToClient()
+void sendUDP(std::queue<float> *temperatureQueue)
 {
-  
+    serverInit();
+
     while(1)
     {
         sprintf(msg, "yoyo");
@@ -61,6 +62,7 @@ void sendToClient()
             close(socket_desc);
             close(client_sock);
             puts("Connection closed");
+            sleep(1);
             serverInit();
         }
     sleep(1);
