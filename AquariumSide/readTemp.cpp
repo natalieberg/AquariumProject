@@ -1,14 +1,13 @@
 #include "readTemp.h"
-#include "includes.h"
 
 #define BUFFER_SIZE 40
 #define TEMPERATURE_SIZE 5
 
 using namespace std;
 
-mutex mtxTemperature;
 
-void readTemp(std::queue<float> *temperatureQueue)
+void readTemp(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex, 
+    bool *connectionStatus, std::mutex *connectionMutex)
 {
     FILE *fp;
     char buff[BUFFER_SIZE];
@@ -30,7 +29,7 @@ void readTemp(std::queue<float> *temperatureQueue)
     while(1)
     {
         fp = popen("cat w1_slave", "r");
-        if (fp != NULL)
+        if (fp != NULL) 
         {
             while (fgets(buff, BUFFER_SIZE, fp) != NULL)
             {   
@@ -50,10 +49,22 @@ void readTemp(std::queue<float> *temperatureQueue)
                     //cout << "temp char: " << temperatureBuff << endl;
                     validReading = false;
                     temperature = atoi(temperatureBuff);
-                    //cout << "temp int: " << temperature << endl;
-                    mtxTemperature.lock();
-                    temperatureQueue->push(temperature);
-                    mtxTemperature.unlock();
+                    cout << "temp: " << temperature << endl;
+                    connectionMutex->lock();
+                    if (*connectionStatus)
+                    {
+                        temperatureMutex->lock();
+                        temperatureQueue->push(temperature);
+                        temperatureMutex->unlock();
+                    } else {
+                        temperatureMutex->lock();
+                        while(!temperatureQueue->empty())
+                        {
+                            temperatureQueue->pop();
+                        }
+                        temperatureMutex->unlock();
+                    }
+                    connectionMutex->unlock();
                 }
 
             }
@@ -62,6 +73,7 @@ void readTemp(std::queue<float> *temperatureQueue)
         }
 
         sleep(1);
+        //cout << *connectionStatus << endl;
     }    
 
 }

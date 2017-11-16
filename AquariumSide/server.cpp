@@ -1,12 +1,11 @@
 #include "server.h" 
-#include "includes.h"
 
 int socket_desc , client_sock , c , read_size , err_send;
 struct sockaddr_in server , client;
 char msg[2000];
 char msg_received[2000];
 
-int serverInit()
+int serverInit(bool *connectionStatus, std::mutex *connectionMutex)
 {
       //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -46,24 +45,43 @@ int serverInit()
     }
     puts("Connection accepted");
 
+    connectionMutex->lock();
+    *connectionStatus = true;
+    connectionMutex->unlock();
+
     return 0;
 }
 
-void sendUDP(std::queue<float> *temperatureQueue)
+void sendUDP(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex, 
+    bool *connectionStatus, std::mutex *connectionMutex)
 {
-    serverInit();
+    float temperatureCelcius = 0;
+    serverInit(connectionStatus, temperatureMutex);
 
     while(1)
-    {
-        sprintf(msg, "yoyo");
+    {   
+        temperatureMutex->lock();
+        if (!temperatureQueue->empty()){
+            temperatureCelcius = (temperatureQueue->front())/1000.0;
+            if (temperatureQueue->front() != temperatureQueue->back())
+            {
+            temperatureQueue->pop();
+            }
+        }
+        
+        temperatureMutex->unlock();
+        sprintf(msg, "%f", temperatureCelcius);
         err_send = send(client_sock, msg, strlen(msg), MSG_NOSIGNAL);
         if (err_send == -1)
         {
             close(socket_desc);
             close(client_sock);
+            connectionMutex->lock();
+            *connectionStatus = false;
+            connectionMutex->unlock();
             puts("Connection closed");
             sleep(1);
-            serverInit();
+            serverInit(connectionStatus, temperatureMutex);
         }
     sleep(1);
     } 

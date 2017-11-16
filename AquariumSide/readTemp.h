@@ -7,5 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <queue>
+#include <mutex>
 
-void readTemp(std::queue<float> *temperatureQueue);
+void readTemp(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex,
+	bool *connectionStatus, std::mutex *connectionMutex);

@@ -9,6 +9,7 @@
 
 extern "C"
 {
-    int serverInit();
-    void sendUDP(std::queue<float> *temperatureQueue);	
+    int serverInit(bool *connectionStatus, std::mutex *connectionMutex);
+    void sendUDP(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex, 
+    	bool *connectionStatus, std::mutex *connectionMutex);	
 }
