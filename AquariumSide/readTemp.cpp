@@ -6,8 +6,7 @@
 using namespace std;
 
 
-void readTemp(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex, 
-    bool *connectionStatus, std::mutex *connectionMutex)
+void readTemp(struct TemperatureStruct *temperatureStruct)
 {
     FILE *fp;
     char buff[BUFFER_SIZE];
@@ -46,25 +45,10 @@ void readTemp(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex,
                 {
                     len = buffString.copy(temperatureBuff, 5, pos+2);
                     temperatureBuff[len] ='\0';
-                    //cout << "temp char: " << temperatureBuff << endl;
                     validReading = false;
-                    temperature = atoi(temperatureBuff);
-                    cout << "temp: " << temperature << endl;
-                    connectionMutex->lock();
-                    if (*connectionStatus)
-                    {
-                        temperatureMutex->lock();
-                        temperatureQueue->push(temperature);
-                        temperatureMutex->unlock();
-                    } else {
-                        temperatureMutex->lock();
-                        while(!temperatureQueue->empty())
-                        {
-                            temperatureQueue->pop();
-                        }
-                        temperatureMutex->unlock();
-                    }
-                    connectionMutex->unlock();
+                    temperatureStruct->temperatureMutex.lock();
+                    temperatureStruct->temperature = atoi(temperatureBuff)/1000.0;
+                    temperatureStruct->temperatureMutex.unlock();
                 }
 
             }
@@ -72,8 +56,7 @@ void readTemp(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex,
             pclose(fp);
         }
 
-        sleep(1);
-        //cout << *connectionStatus << endl;
+        sleep(5);
     }    
 
 }

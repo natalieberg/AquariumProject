@@ -1,3 +1,6 @@
+#ifndef SERVER_H_
+#define SERVER_H_
+
 #include <stdio.h>
 #include <string.h>    
 #include <sys/socket.h>
@@ -6,10 +9,13 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
+#include "definitions.h"
 
 extern "C"
 {
-    int serverInit(bool *connectionStatus, std::mutex *connectionMutex);
-    void sendUDP(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex, 
-    	bool *connectionStatus, std::mutex *connectionMutex);	
+    int serverInit(struct TemperatureStruct *temperatureStruct);
+    void sendUDP(struct ConnectionStruct *connectionStruct, 
+    	struct TemperatureStruct *temperatureStruct, struct LeakStruct *leakStruct);	
 }
+
+#endif

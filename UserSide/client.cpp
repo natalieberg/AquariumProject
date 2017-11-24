@@ -1,5 +1,6 @@
 
 #include "client.h"
+#include "messageHandler.h"
  
 int connectUDP()
 {
@@ -14,7 +15,7 @@ int connectUDP()
     }
     puts("Socket created");
      
-    server.sin_addr.s_addr = inet_addr("129.241.154.25");
+    server.sin_addr.s_addr = inet_addr("129.241.154.86");
     server.sin_family = AF_INET;
     server.sin_port = htons( 8888 );
  
@@ -29,20 +30,30 @@ int connectUDP()
     return sock;
 }
      
-void listenUDP(int sock)
-{
-    char server_reply[2000];
+void listenUDP(struct TemperatureStruct *temperatureStruct)
+{   
+    int sock;
+    char recvMsg[2000];
+
+    sock = connectUDP();
+
     while(1)
     {       
+        memset(recvMsg, 0, sizeof(recvMsg));
         //Receive a reply from the server
-        if( recv(sock , server_reply , 2000 , 0) < 0)
+        if( recv(sock, recvMsg, 2000, 0) < 0)
         {
             puts("recv failed");
             break;
         }
-         
-        puts("Message from server:");
-        puts(server_reply);
+        
+        msgHandler(recvMsg, temperatureStruct);
+
+        //temperatureStruct->temperatureMutex.lock();
+        //temperatureStruct->temperatureQ.push(atof(recvTemperature));
+        //temperatureStruct->temperatureMutex.unlock();
+        //puts("Message from server:");
+        //puts(recvMsg);
     }
 }
 

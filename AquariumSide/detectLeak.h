@@ -1,5 +1,5 @@
-#ifndef READTEMP_H_
-#define READTEMP_H_
+#ifndef DETECTLEAK_H_
+#define DETECTLEAK_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,10 +9,13 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <queue>
-#include <mutex>
+#include <mutex> 
+#include "/home/natalie/wiringPi/wiringPi/wiringPi.h"
 #include "definitions.h"
 
-void readTemp(struct TemperatureStruct *temperaturStruct);
+void detectLeak(struct LeakStruct *leakage);
+
 
 #endif
+
+

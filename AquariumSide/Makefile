@@ -2,10 +2,10 @@
 TARGET = main
 
 # compiler flags
-CXXFLAGS = -g -Wall -std=c++11 -pthread
+CXXFLAGS = -g -Wall -I/home/natalie/wiringPi/wiringPi -std=c++11 -pthread  
 
 # linker flags
-LDFLAGS = -g -std=c++11 -pthread
+LDFLAGS = -g -L/home/natalie/wiringPi/wiringPi -lwiringPi -std=c++11 -pthread 
 
 # list of sources
 SOURCES = $(wildcard *.cpp)

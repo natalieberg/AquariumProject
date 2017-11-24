@@ -1,12 +1,12 @@
 #include "server.h" 
 
-int socket_desc , client_sock , c , read_size , err_send;
-struct sockaddr_in server , client;
-char msg[2000];
-char msg_received[2000];
+int socket_desc , client_sock;
 
-int serverInit(bool *connectionStatus, std::mutex *connectionMutex)
+int serverInit(struct ConnectionStruct *connectionStruct)
 {
+    int c;
+    struct sockaddr_in server , client;
+
       //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     if (socket_desc == -1)
@@ -45,44 +45,51 @@ int serverInit(bool *connectionStatus, std::mutex *connectionMutex)
     }
     puts("Connection accepted");
 
-    connectionMutex->lock();
-    *connectionStatus = true;
-    connectionMutex->unlock();
+    connectionStruct->connectionMutex.lock();
+    connectionStruct->isConnected = true;
+    connectionStruct->connectionMutex.unlock();
 
     return 0;
 }
 
-void sendUDP(std::queue<float> *temperatureQueue, std::mutex *temperatureMutex, 
-    bool *connectionStatus, std::mutex *connectionMutex)
+void sendUDP(struct ConnectionStruct *connectionStruct, 
+    struct TemperatureStruct *temperatureStruct, 
+    struct LeakStruct *leakStruct)
 {
-    float temperatureCelcius = 0;
-    serverInit(connectionStatus, temperatureMutex);
+    int errSend;
+    char msgTemperature[2000];
+    char msgLeak[2000];
+
+    serverInit(connectionStruct);
 
     while(1)
     {   
-        temperatureMutex->lock();
-        if (!temperatureQueue->empty()){
-            temperatureCelcius = (temperatureQueue->front())/1000.0;
-            if (temperatureQueue->front() != temperatureQueue->back())
-            {
-            temperatureQueue->pop();
-            }
-        }
-        
-        temperatureMutex->unlock();
-        sprintf(msg, "%f", temperatureCelcius);
-        err_send = send(client_sock, msg, strlen(msg), MSG_NOSIGNAL);
-        if (err_send == -1)
+        temperatureStruct->temperatureMutex.lock();
+        sprintf(msgTemperature, "$01 %f \n", temperatureStruct->temperature);
+        temperatureStruct->temperatureMutex.unlock();
+
+        leakStruct->leakMutex.lock();
+        sprintf(msgLeak, "$02 %d \n", leakStruct->isLeaking);
+        leakStruct->leakMutex.unlock();
+
+        printf("%s\n", msgTemperature);
+        printf("%s\n", msgLeak);
+
+
+        //TODO: FIX SERVER DED WHEN CLIENT DISCONNECTS
+        errSend = send(client_sock, msgTemperature, strlen(msgTemperature), 0);
+        errSend = send(client_sock, msgLeak, strlen(msgLeak), 0);
+        if (errSend == -1)
         {
             close(socket_desc);
             close(client_sock);
-            connectionMutex->lock();
-            *connectionStatus = false;
-            connectionMutex->unlock();
+            connectionStruct->connectionMutex.lock();
+            connectionStruct->isConnected = false;
+            connectionStruct->connectionMutex.unlock();
             puts("Connection closed");
             sleep(1);
-            serverInit(connectionStatus, temperatureMutex);
+            serverInit(connectionStruct);
         }
-    sleep(1);
+    sleep(2);
     } 
 }
