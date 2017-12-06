@@ -54,10 +54,11 @@ int serverInit(struct ConnectionStruct *connectionStruct)
 
 void sendUDP(struct ConnectionStruct *connectionStruct, 
     struct TemperatureStruct *temperatureStruct, 
-    struct LeakStruct *leakStruct)
+    struct PHStruct *phStruct, struct LeakStruct *leakStruct)
 {
     int errSend;
     char msgTemperature[2000];
+    char msgPH[2000];
     char msgLeak[2000];
 
     serverInit(connectionStruct);
@@ -65,19 +66,27 @@ void sendUDP(struct ConnectionStruct *connectionStruct,
     while(1)
     {   
         temperatureStruct->temperatureMutex.lock();
-        sprintf(msgTemperature, "$01 %f \n", temperatureStruct->temperature);
+        sprintf(msgTemperature, "$01 %4.2f \n", temperatureStruct->temperature);
         temperatureStruct->temperatureMutex.unlock();
 
+        phStruct->phMutex.lock();
+        sprintf(msgPH, "$02 %4.2f \n", phStruct->ph);
+        phStruct->phMutex.unlock();
+
         leakStruct->leakMutex.lock();
-        sprintf(msgLeak, "$02 %d \n", leakStruct->isLeaking);
+        sprintf(msgLeak, "$03 %d \n", leakStruct->isLeaking);
         leakStruct->leakMutex.unlock();
 
         printf("%s\n", msgTemperature);
+        printf("%s\n", msgPH);
         printf("%s\n", msgLeak);
 
 
         //TODO: FIX SERVER DED WHEN CLIENT DISCONNECTS
         errSend = send(client_sock, msgTemperature, strlen(msgTemperature), 0);
+        sleep(1);
+        errSend = send(client_sock, msgPH, strlen(msgPH), 0);
+        sleep(1);
         errSend = send(client_sock, msgLeak, strlen(msgLeak), 0);
         if (errSend == -1)
         {
@@ -90,6 +99,7 @@ void sendUDP(struct ConnectionStruct *connectionStruct,
             sleep(1);
             serverInit(connectionStruct);
         }
-    sleep(2);
+
+    sleep(3);
     } 
 }

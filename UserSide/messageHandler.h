@@ -9,6 +9,7 @@
 #include <string>
 #include "definitions.h"
 
-void msgHandler(char *msgRecv, struct TemperatureStruct *TemperatureStruct);
+void msgHandler(char *msgRecv, struct TemperatureStruct *temperatureStruct,
+	struct PHStruct *phStruct, struct LeakStruct *leakStruct);
 
 #endif

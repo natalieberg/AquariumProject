@@ -7,13 +7,15 @@
 
 using namespace std;
 
-void uploadSQL(struct TemperatureStruct *temperatureStruct)
+void uploadSQL(struct TemperatureStruct *temperatureStruct, struct PHStruct *phStruct,
+    struct LeakStruct *leakStruct)
 {
 
         sql::Driver *driver;
         sql::Connection *conn;
         sql::Statement *statemnt;
         sql::PreparedStatement *preparedStatemnt;
+
 
     try {
 
@@ -30,6 +32,21 @@ void uploadSQL(struct TemperatureStruct *temperatureStruct)
 
         statemnt->execute("TRUNCATE TABLE Temperature");
 
+
+        statemnt->execute("CREATE TABLE IF NOT EXISTS pH (ph FLOAT, \
+            timestamp TIMESTAMP)");
+
+        statemnt->execute("TRUNCATE TABLE pH");
+
+
+        statemnt->execute("CREATE TABLE IF NOT EXISTS Leakage (leak BIT, \
+            timestamp TIMESTAMP)");
+
+        statemnt->execute("TRUNCATE TABLE Leakage");
+
+
+
+
         while(1)
         {
             preparedStatemnt = conn->prepareStatement("INSERT INTO Temperature (temperature) VALUES (?)");
@@ -41,7 +58,28 @@ void uploadSQL(struct TemperatureStruct *temperatureStruct)
                 preparedStatemnt->executeUpdate();
             }
             temperatureStruct->temperatureMutex.unlock();
-            sleep(1);
+
+            preparedStatemnt = conn->prepareStatement("INSERT INTO pH (ph) VALUES (?)");
+            phStruct->phMutex.lock();
+            if(!(phStruct->phQ.empty()))
+            {
+                preparedStatemnt->setDouble(1, phStruct->phQ.front());
+                phStruct->phQ.pop();
+                preparedStatemnt->executeUpdate();
+            }
+            phStruct->phMutex.unlock();
+
+            preparedStatemnt = conn->prepareStatement("INSERT INTO Leakage (leak) VALUES (?)");
+            leakStruct->leakMutex.lock();
+            if (!(leakStruct->leakQ.empty()))
+            {
+                preparedStatemnt->setDouble(1, leakStruct->leakQ.front());
+                leakStruct->leakQ.pop();
+                preparedStatemnt->executeUpdate();
+            }
+            leakStruct->leakMutex.unlock();
+
+            sleep(5);
         }
 
 

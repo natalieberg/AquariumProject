@@ -14,13 +14,11 @@ from http import server
 PAGE="""\
 <html>
 <head>
-<title>TTK8 Project - Live Video Stream</title>
+<title>Fish Cam</title>
 </head>
 <body>
-<center><h1>TTK8 Project - Live Video Stream</h1></center>
+<center><h1>Fish Cam</h1></center>
 <center><img src="stream.mjpg" width="640" height="480"></center>
-<center><h2>Rasperry Pi 3 Model B V1.2<h2></center>
-<center><h2>Rasperry Pi Camera Module V2</center>
 </body>
 </html>
 """

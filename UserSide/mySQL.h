@@ -16,6 +16,7 @@
 #include "definitions.h"
 
 
-void uploadSQL(struct TemperatureStruct *TemperatureStruct);
+void uploadSQL(struct TemperatureStruct *temperatureStruct, struct PHStruct *phStruct,
+	struct LeakStruct *leakStruct);
 
 #endif 

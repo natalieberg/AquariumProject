@@ -30,7 +30,8 @@ int connectUDP()
     return sock;
 }
      
-void listenUDP(struct TemperatureStruct *temperatureStruct)
+void listenUDP(struct TemperatureStruct *temperatureStruct, struct PHStruct *phStruct,
+    struct LeakStruct *leakStruct)
 {   
     int sock;
     char recvMsg[2000];
@@ -46,14 +47,9 @@ void listenUDP(struct TemperatureStruct *temperatureStruct)
             puts("recv failed");
             break;
         }
-        
-        msgHandler(recvMsg, temperatureStruct);
 
-        //temperatureStruct->temperatureMutex.lock();
-        //temperatureStruct->temperatureQ.push(atof(recvTemperature));
-        //temperatureStruct->temperatureMutex.unlock();
-        //puts("Message from server:");
-        //puts(recvMsg);
+        msgHandler(recvMsg, temperatureStruct, phStruct, leakStruct);
+
     }
 }
 

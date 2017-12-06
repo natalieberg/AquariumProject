@@ -11,10 +11,16 @@ struct TemperatureStruct
 	std::mutex temperatureMutex;
 };
 
+struct PHStruct
+{
+	std::queue<float> phQ;
+	std::mutex phMutex;
+};
+
 struct LeakStruct
 {
-	std::queue<bool> msgQ;
-	std::mutex msgMutex;
+	std::queue<bool> leakQ;
+	std::mutex leakMutex;
 };
 
 struct ConnectionStruct

@@ -4,6 +4,7 @@
 #include "server.h"
 #include "readTemp.h"
 #include "detectLeak.h"
+#include "readPH.h"
 #include "definitions.h"
 
 using namespace std;
@@ -13,16 +14,20 @@ int main()
 {
 
 	TemperatureStruct temperatureStruct = {.temperature = 0};
-	ConnectionStruct connectionStruct = {.isConnected = false};
+	PHStruct phStruct = {.ph = 0};
 	LeakStruct leakStruct = {.isLeaking = false};
+	ConnectionStruct connectionStruct = {.isConnected = false};
 
 
-	thread serverThread (sendUDP, &connectionStruct, &temperatureStruct, &leakStruct);
+	thread serverThread (sendUDP, &connectionStruct, &temperatureStruct, 
+		&phStruct, &leakStruct);
 	thread temperatureThread (readTemp, &temperatureStruct);
+	thread phThread (readPH, &phStruct);
 	thread leakThread(detectLeak, &leakStruct);
 
 	serverThread.join();
 	temperatureThread.join();
+	phThread.join();
 	leakThread.join();
 
 	return 0;

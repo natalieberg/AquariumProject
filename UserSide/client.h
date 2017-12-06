@@ -14,7 +14,8 @@
 extern "C" 
 {
 	int connectUDP();
-	void listenUDP(struct TemperatureStruct *temperatureStruct);
+	void listenUDP(struct TemperatureStruct *temperatureStruct, struct PHStruct *phStruct,
+		struct LeakStruct *leakStruct);
 }
 
 

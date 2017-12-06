@@ -7,10 +7,10 @@ struct TemperatureStruct
 	std::mutex temperatureMutex;
 };
 
-struct ConnectionStruct
+struct PHStruct
 {
-	bool isConnected;
-	std::mutex connectionMutex;
+	float ph;
+	std::mutex phMutex;
 };
 
 struct LeakStruct
@@ -19,5 +19,10 @@ struct LeakStruct
 	std::mutex leakMutex;
 };
 
+struct ConnectionStruct
+{
+	bool isConnected;
+	std::mutex connectionMutex;
+};
 
 #endif

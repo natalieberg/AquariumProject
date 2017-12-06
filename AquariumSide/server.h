@@ -15,7 +15,8 @@ extern "C"
 {
     int serverInit(struct TemperatureStruct *temperatureStruct);
     void sendUDP(struct ConnectionStruct *connectionStruct, 
-    	struct TemperatureStruct *temperatureStruct, struct LeakStruct *leakStruct);	
+    	struct TemperatureStruct *temperatureStruct, struct PHStruct *phStruct,
+    	struct LeakStruct *leakStruct);	
 }
 
 #endif

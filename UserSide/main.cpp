@@ -11,16 +11,15 @@ int main()
 {
 
 	TemperatureStruct temperatureStruct;
+	PHStruct phStruct;
+	LeakStruct leakStruct;
 	ConnectionStruct connectionStruct = {.isConnected = false};
-	//MessageStruct msgStruct;
 
-	thread listenUDPThread (listenUDP, &temperatureStruct);
-	//thread msgHandlerThread(msgHandler, &msgStruct);
-	//thread sqlThread (uploadSQL, &temperatureStruct);
+	thread listenUDPThread (listenUDP, &temperatureStruct, &phStruct, &leakStruct);
+	thread sqlThread (uploadSQL, &temperatureStruct, &phStruct, &leakStruct);
 
 	listenUDPThread.join();
-	//msgHandlerThread.join();
-	//sqlThread.join();
+	sqlThread.join();
 
 	return 0;
 }
