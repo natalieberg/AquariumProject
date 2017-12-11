@@ -14,14 +14,14 @@ void msgHandler(char *msgRecv, struct TemperatureStruct *temperatureStruct,
 	string msgRecvString = string(msgRecv);
 	string msgHeader = msgRecvString.substr(0, 3);
 
-	cout << "Msg recv: " << msgRecvString << endl;
+	//cout << "Msg recv: " << msgRecvString << endl;
 	//cout << "Header: " <<  msgHeader << endl;
 
 	if (msgHeader == string("$01"))
 	{
 		temperatureString = msgRecvString.substr(3);
 		temperature = stof(temperatureString);
-		//cout << temperature << endl;
+		cout << "Temperature(C): " << temperature << endl;
 		temperatureStruct->temperatureMutex.lock();
 		temperatureStruct->temperatureQ.push(temperature);
 		temperatureStruct->temperatureMutex.unlock();
@@ -31,7 +31,7 @@ void msgHandler(char *msgRecv, struct TemperatureStruct *temperatureStruct,
 	{
 		phString = msgRecvString.substr(3);
 		ph = stof(phString);
-		//cout << ph << endl;
+		cout << "pH: " << ph << endl;
 		phStruct->phMutex.lock();
 		phStruct->phQ.push(ph);
 		phStruct->phMutex.unlock();
@@ -42,7 +42,7 @@ void msgHandler(char *msgRecv, struct TemperatureStruct *temperatureStruct,
 	{
 		leakString = msgRecvString.substr(3);
 		leak = stoi(leakString);
-		//cout << leak << endl;
+		cout << "Leak: " << leak << endl;
 		leakStruct->leakMutex.lock();
 		leakStruct->leakQ.push(leak);
 		leakStruct->leakMutex.unlock();

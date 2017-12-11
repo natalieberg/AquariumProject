@@ -5,6 +5,7 @@
 #include "readTemp.h"
 #include "detectLeak.h"
 #include "readPH.h"
+#include "pump.h"
 #include "definitions.h"
 
 using namespace std;
@@ -24,11 +25,13 @@ int main()
 	thread temperatureThread (readTemp, &temperatureStruct);
 	thread phThread (readPH, &phStruct);
 	thread leakThread(detectLeak, &leakStruct);
+	thread pumpThread(pumpControl);
 
 	serverThread.join();
 	temperatureThread.join();
 	phThread.join();
 	leakThread.join();
+	pumpThread.join();
 
 	return 0;
 }

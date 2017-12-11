@@ -77,9 +77,9 @@ void sendUDP(struct ConnectionStruct *connectionStruct,
         sprintf(msgLeak, "$03 %d \n", leakStruct->isLeaking);
         leakStruct->leakMutex.unlock();
 
-        printf("%s\n", msgTemperature);
-        printf("%s\n", msgPH);
-        printf("%s\n", msgLeak);
+        //printf("%s\n", msgTemperature);
+        //printf("%s\n", msgPH);
+        //printf("%s\n", msgLeak);
 
 
         //TODO: FIX SERVER DED WHEN CLIENT DISCONNECTS
